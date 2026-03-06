@@ -3,6 +3,14 @@ import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { IconBell, IconBellRinging, IconX } from "@tabler/icons-vue";
 import { getNotices } from '@/api/dashboard';
 import { useToast } from '@/composables/useToast';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+
+// 配置 marked
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
 
 // 定义组件属性
 const props = defineProps({
@@ -106,6 +114,13 @@ const checkForPopupNotices = (noticesData) => {
     }
   }
 };
+
+// 将 Markdown 内容解析为安全的 HTML
+const parsedContent = computed(() => {
+  if (!selectedNotice.value?.content) return '';
+  const rawHtml = marked(selectedNotice.value.content);
+  return DOMPurify.sanitize(rawHtml);
+});
 
 // 显示公告详情弹窗
 const showNoticeDetail = (notice) => {
@@ -218,7 +233,7 @@ onUnmounted(() => {
                 </button>
               </div>
               <div class="notice-modal-content">
-                <div class="notice-content" v-html="selectedNotice?.content"></div>
+                <div class="notice-content markdown-body" v-html="parsedContent"></div>
               </div>
               <div class="notice-modal-footer">
                 <button class="popup-action-btn adaptive-btn" @click="closeNoticeModal">
@@ -498,7 +513,84 @@ onUnmounted(() => {
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-color);
-    white-space: pre-wrap;
+  }
+
+  /* Markdown 排版样式 */
+  .markdown-body {
+    :deep(h1), :deep(h2), :deep(h3), :deep(h4) {
+      margin: 16px 0 8px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    :deep(h1) { font-size: 1.4em; }
+    :deep(h2) { font-size: 1.2em; }
+    :deep(h3) { font-size: 1.1em; }
+
+    :deep(p) {
+      margin: 8px 0;
+    }
+
+    :deep(img) {
+      max-width: 100%;
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+
+    :deep(a) {
+      color: var(--theme-color);
+      text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+
+    :deep(code) {
+      background: rgba(0, 0, 0, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    :deep(pre) {
+      background: rgba(0, 0, 0, 0.06);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      code {
+        background: none;
+        padding: 0;
+      }
+    }
+
+    :deep(ul), :deep(ol) {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    :deep(blockquote) {
+      border-left: 3px solid var(--theme-color);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--secondary-text-color);
+    }
+
+    :deep(hr) {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      margin: 16px 0;
+    }
+
+    :deep(table) {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      th, td {
+        border: 1px solid var(--border-color);
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background: rgba(0, 0, 0, 0.03);
+      }
+    }
   }
 }
 

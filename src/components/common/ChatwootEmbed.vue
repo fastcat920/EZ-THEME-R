@@ -73,11 +73,13 @@ export default {
           return;
         }
 
-        // 设置 Chatwoot 全局配置
+        // 设置 Chatwoot 全局配置（含暗色模式）
+        const storedTheme = localStorage.getItem('theme');
         window.chatwootSettings = {
           position: isMobile.value ? 'right' : 'left',
           type: 'standard',
-          launcherTitle: '在线客服'
+          launcherTitle: '在线客服',
+          darkMode: storedTheme === 'dark' ? 'dark' : 'light'
         };
 
         // 加载 Chatwoot SDK
@@ -143,29 +145,51 @@ export default {
       const storedTheme = localStorage.getItem('theme');
       const isDark = storedTheme === 'dark';
       
-      if (window.$chatwoot) {
-        window.$chatwoot.setTheme(isDark ? 'dark' : 'light');
+      // SDK 正确的 API 是 setColorScheme（支持 'light' / 'auto' / 'dark'）
+      if (window.$chatwoot && typeof window.$chatwoot.setColorScheme === 'function') {
+        window.$chatwoot.setColorScheme(isDark ? 'dark' : 'light');
       }
     };
     
     const setChatwootMobileStyles = () => {
-      setTimeout(() => {
-        const style = document.createElement('style');
-        style.id = 'chatwoot-custom-styles';
-        style.textContent = `
-          .woot-widget-holder {
-            bottom: 80px !important;
+      const BOTTOM = '140px';
+      
+      const applyBottom = () => {
+        // SDK 源码中气泡容器 class 为 woot--bubble-holder
+        const bubbles = document.getElementsByClassName('woot--bubble-holder');
+        for (let i = 0; i < bubbles.length; i++) {
+          bubbles[i].style.setProperty('bottom', BOTTOM, 'important');
+        }
+        // 聊天窗口容器 id 为 cw-widget-holder
+        const widget = document.getElementById('cw-widget-holder');
+        if (widget) {
+          widget.style.setProperty('bottom', BOTTOM, 'important');
+        }
+      };
+      
+      // SDK 的 onLoad 回调中才创建气泡，需要等元素出现
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          // 监听新节点插入（气泡创建）和样式变化（SDK 重置）
+          if (mutation.type === 'childList' || mutation.type === 'attributes') {
+            applyBottom();
           }
-          .woot--bubble-holder {
-            bottom: 80px !important;
-          }
-        `;
-        
-        const oldStyle = document.getElementById('chatwoot-custom-styles');
-        if (oldStyle) oldStyle.remove();
-        
-        document.head.appendChild(style);
-      }, 1000);
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+      });
+      
+      // 延迟也尝试一下，双保险
+      setTimeout(applyBottom, 500);
+      setTimeout(applyBottom, 2000);
+      setTimeout(applyBottom, 5000);
+      
+      onUnmounted(() => observer.disconnect());
     };
 
     const fetchUserData = async () => {
@@ -456,14 +480,29 @@ export default {
       }
     });
     
+    // 监听主题切换（body 的 dark-theme class 变化），实时同步 Chatwoot 配色
+    let themeObserver = null;
+    
     onMounted(async () => {
       checkIfMobile();
       await initChatwoot();
       window.addEventListener('resize', handleResize);
+      
+      // 用 MutationObserver 监听 body 的 class 变化（useTheme 通过 classList 切换主题）
+      themeObserver = new MutationObserver(() => {
+        if (chatwootInitialized.value) {
+          setChatwootTheme();
+        }
+      });
+      themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
     });
     
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize);
+      if (themeObserver) themeObserver.disconnect();
     });
     
     return {

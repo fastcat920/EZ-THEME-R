@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 
   <div 
 
@@ -523,10 +523,13 @@ export default {
           return;
         }
         
+        // 在初始化前设置暗色模式（Chatwoot SDK 不提供 setTheme 方法）
+        const storedTheme = localStorage.getItem('theme');
         window.chatwootSettings = {
           position: 'right',
           type: 'expanded_bubble',
-          launcherTitle: '在线客服'
+          launcherTitle: '在线客服',
+          darkMode: storedTheme === 'dark' ? 'dark' : 'light'
         };
         
         // 加载 SDK
@@ -545,11 +548,6 @@ export default {
         window.addEventListener('chatwoot:ready', () => {
           loading.value = false;
           window.CHATWOOT_INITIALIZED = true;
-          
-          const storedTheme = localStorage.getItem('theme');
-          if (storedTheme === 'dark' && window.$chatwoot) {
-            window.$chatwoot.setTheme('dark');
-          }
           
           if (store.getters.isLoggedIn && window.$chatwoot) {
             const userEmail = extractUserEmailForChatwoot();

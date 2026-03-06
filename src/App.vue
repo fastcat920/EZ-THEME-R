@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div>
     <!-- 静态布局容器，包含不需要过渡效果的菜单和按钮 -->
     <div class="static-layout" v-if="$route.meta.requiresAuth">
@@ -346,6 +346,15 @@ export default {
 
       applyTheme(store.getters.currentTheme);
 
+      // 将客服气泡位置配置注入 CSS 变量（复用 iconPosition.mobile）
+      const mobilePos = CUSTOMER_SERVICE_CONFIG.iconPosition?.mobile;
+      if (mobilePos?.bottom) {
+        document.documentElement.style.setProperty('--chatwoot-bubble-bottom', mobilePos.bottom);
+      }
+      if (mobilePos?.right) {
+        document.documentElement.style.setProperty('--chatwoot-bubble-right', mobilePos.right);
+      }
+
       checkAuthAndReloadMessages();
 
       document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -682,5 +691,16 @@ html {
 
 .nprogress-custom-parent #nprogress .bar {
   position: absolute;
+}
+
+/* Chatwoot 气泡在移动端上移，通过配置项 chatwootBubbleBottom 控制 */
+@media (max-width: 768px) {
+  .woot-widget-bubble {
+    bottom: var(--chatwoot-bubble-bottom, 20px) !important;
+    right: var(--chatwoot-bubble-right, 20px) !important;
+  }
+  .woot-widget-holder {
+    bottom: var(--chatwoot-bubble-bottom, 20px) !important;
+  }
 }
 </style>

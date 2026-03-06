@@ -588,7 +588,7 @@ export const config = {
             // 移动版图标距离右下角的距离
             mobile: {
                 right: '20px',
-                bottom: '100px'
+                bottom: '80px'
             }
         }
     },

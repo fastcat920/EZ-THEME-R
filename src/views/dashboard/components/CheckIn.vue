@@ -1,7 +1,7 @@
 <script setup>
 import { IconArrowsShuffle2, IconMoodCrazyHappy } from "@tabler/icons-vue";
 import { checkInReq } from "@/api/user";
-import {computed, ref} from "vue";
+import { ref } from "vue";
 import { useToast } from '@/composables/useToast';
 import LuckyModal from "./LuckyModal.vue";
 
@@ -10,7 +10,6 @@ const { showToast } = useToast();
 
 const loading = ref(false);
 const modalRef = ref(null);
-const isMobile = computed(() => window.innerWidth < 768);
 
 const onLuckyCheckinSuccess = () => {
   // 传递幸运签到的成功事件给父组件
@@ -42,12 +41,12 @@ const checkin = async (type) => {
 
 <template>
   <div class="checkin-container">
-    <button class="btn-primary withdraw-btn" @click="checkin(1)" :style="{ marginBottom: isMobile ? '8px': null }">
+    <button class="btn-primary withdraw-btn" @click="checkin(1)">
       <div v-if="loading" class="loader"></div>
       <IconArrowsShuffle2 v-else class="btn-icon" />
       普通签到
     </button>
-    <button class="btn-primary lucky-checkin" @click="checkin(2)" :style="{ marginBottom: isMobile ? '8px': null }">
+    <button class="btn-primary lucky-checkin" @click="checkin(2)">
       <IconMoodCrazyHappy class="btn-icon" />
       运气签到
     </button>
@@ -58,6 +57,7 @@ const checkin = async (type) => {
 
 <style scoped lang="scss">
 .checkin-container {
+  margin-bottom: 16px;
   .btn-primary, .btn-outline, .btn-action {
     display: inline-flex;
     align-items: center;
@@ -144,10 +144,17 @@ const checkin = async (type) => {
   @media (max-width: 768px) {
     width: 100%;
     margin-top: 10px;
+    display: flex;
+    gap: 10px;
 
     .btn-primary {
-      width: 100%;
+      flex: 1;
+      min-width: 0;
       justify-content: center;
+    }
+
+    .withdraw-btn {
+      margin-right: 0;
     }
   }
 }
