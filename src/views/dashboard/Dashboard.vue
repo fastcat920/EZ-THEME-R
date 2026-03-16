@@ -139,10 +139,7 @@
                   <IconCalendarPlus :size="16" class="btn-icon"/>
                   <span>{{ $t('dashboard.activateDataCycleInAdvance') }}</span>
                 </button>
-                <button class="btn-outline" @click="goToSupport">
-                  <IconMessage :size="16" class="btn-icon"/>
-                  <span class="">{{ $t('dashboard.ticketSupport') }}</span>
-                </button>
+            
               </div>
             </div>
             <div v-if="DASHBOARD_CONFIG.showCheckIn">
