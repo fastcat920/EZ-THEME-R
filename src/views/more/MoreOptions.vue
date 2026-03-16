@@ -10,24 +10,7 @@
 
     <div class="more-inner">
 
-      <!-- 欢迎卡片 -->
-
-      <div class="dashboard-card welcome-card">
-
-        <div class="card-header">
-
-          <h2 class="card-title">{{ $t('more.title') }}</h2>
-
-        </div>
-
-        <div class="card-body">
-
-          <p>{{ $t('more.description') }}</p>
-
-        </div>
-
-      </div>
-
+ 
       
 
       <!-- 功能导航卡片组 -->
@@ -136,32 +119,7 @@
 
         </div>
 
-        
-
-        <div v-if="shouldShowTicketsCard" class="stats-card" @click="navigateToTickets">
-
-          <div class="stats-icon">
-
-            <IconMessages :size="32" />
-
-          </div>
-
-          <div class="stats-info">
-
-            <div class="stats-value">{{ $t('tickets.title') }}</div>
-
-            <div class="stats-label">{{ $t('more.getTechnicalSupport') }}</div>
-
-          </div>
-
-          <div class="chevron-icon">
-
-            <IconChevronRight :size="20" />
-
-          </div>
-
-        </div>
-
+      
         
 
         <div class="stats-card" v-if="shouldShowTrafficCard && showTrafficLog" @click="$router.push('/trafficlog')">
