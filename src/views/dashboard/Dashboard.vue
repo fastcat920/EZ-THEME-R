@@ -439,70 +439,20 @@
               <div class="stats-label">{{ $t('dashboard.remainingTraffic') }}</div>
             </div>
 
-            <!-- 水流进度条效果 -->
-            <div class="water-container">
-              <div class="water-progress"
-                   :class="{'animate-water': waterAnimationState.canAnimate}"
-                   :style="{ height: waterAnimationState.canAnimate ? `${trafficPercentage}%` : '0%' }">
-              </div>
-            </div>
-          </div>
-
-          <div class="stats-card"
-               :class="{
-              'card-animate': !loading.userStats,
-              'warning-card': isExpiringSoon && !isExpired,
-              'danger-card': isExpired
-            }"
-               style="animation-delay: 0.6s">
-            <div class="stats-icon">
-              <IconCalendar :size="32"/>
-            </div>
-            <div class="stats-info">
-              <div class="stats-value">
-                {{
-                  userStats.isRemainingDaysPermanent ? $t('dashboard.permanent') : userStats.remainingDays + $t('dashboard.days')
-                }}
-              </div>
-              <div class="stats-label">{{ $t('dashboard.remainingDays') }}</div>
-            </div>
-          </div>
-
-          <div class="stats-card"
-               :class="{'card-animate': !loading.userStats, 'balance-card': true, 'clickable': isXiaoPanel}"
-               style="animation-delay: 0.7s"
-               @click="isXiaoPanel ? navigateToDeposit() : null"
-               :style="isXiaoPanel ? { cursor: 'pointer' } : {}">
-            <div class="stats-icon">
-              <IconWallet :size="32"/>
-            </div>
-            <div class="stats-info">
-              <div class="stats-value">{{ userStats.accountBalance }}</div>
-              <div class="stats-label">{{ $t('dashboard.accountBalance') }}</div>
-            </div>
-            <div v-if="isXiaoPanel" class="chevron-icon">
-              <IconChevronRight :size="20"/>
-            </div>
-          </div>
-
-          <div class="stats-card doc-card"
-               :class="{'card-animate': !loading.userStats}"
-               id="help-document-card"
-               @click="openDocumentation"
-               style="animation-delay: 0.8s">
-            <div class="stats-icon">
-              <IconFileText :size="32"/>
-            </div>
-            <div class="stats-info">
-              <div class="stats-value">{{ $t('dashboard.viewHelp') }}</div>
-              <div class="stats-label">{{ $t('dashboard.documentation') }}</div>
-            </div>
-            <div class="chevron-icon">
-              <IconChevronRight :size="20"/>
-            </div>
-          </div>
-        </template>
+ 
+      <!-- 横向进度条效果 -->
+<div class="stats-card">
+  <div class="traffic-container">
+    <div class="traffic-bar">
+      <div class="traffic-progress"
+           :class="{'animate-progress': waterAnimationState.canAnimate}"
+           :style="{ width: waterAnimationState.canAnimate ? `${trafficPercentage}%` : '0%' }">
       </div>
+    </div>
+  </div>
+</div>
+
+            
 
       <!-- 官方客户端下载区域 -->
       <div class="dashboard-card download-card" :class="{'card-animate': !loading.userInfo}"
@@ -1772,6 +1722,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.traffic-container {
+  width: 100%; // 确保容器占据可用宽度
+  height: 10px;  // 设置进度条高度
+  background-color: rgba(var(--theme-color-rgb), 0.1); // 背景色，可自定义
+  border-radius: 5px;  // 圆角
+  overflow: hidden; // 确保进度条超出部分被隐藏
+  position: relative; // 方便定位进度条
+
+  .traffic-bar {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .traffic-progress {
+    height: 100%;
+    background-color: var(--theme-color); // 进度条颜色
+    width: 0; // 初始宽度为 0
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out; // 平滑过渡效果
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    &.animate-progress {
+      // 动画类，用于启动过渡效果
+    }
+  }
+}
+
+            
 .dashboard-container {
   padding: 20px;
   display: flex;
