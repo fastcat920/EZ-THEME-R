@@ -4,10 +4,6 @@
 
     <div class="shop-inner">
 
-      <!-- 欢迎卡片 (替换为新组件) -->
-
-      <WelcomeCard @open-iframe-popup="showIframePopup = true" />
-
 
 
       <!-- 套餐列表 -->
