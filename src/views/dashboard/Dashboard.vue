@@ -1,4 +1,3 @@
-
 <template>
   <div class="dashboard-container">
     <div class="dashboard-inner">
@@ -399,61 +398,60 @@
           </div>
         </template>
 
-        <template v-else-if="!hasPlan">
-          <!-- 没有套餐时显示的提示卡片 -->
-          <div class="dashboard-card stats-card no-plan-card" :class="{'card-animate': !loading.userStats}"
-               style="animation-delay: 0.5s; grid-column: span 4; margin: 0 auto; max-width: 1200px; width: 100%;">
-            <div class="no-plan-content">
-              <div class="no-plan-icon">
-                <IconShoppingCart :size="45" class="icon-cart"/>
+        <template v-else>
+          <!-- 使用一个额外的 div 包裹所有的条件渲染卡片 -->
+          <div>
+            <div v-if="!hasPlan" class="dashboard-card stats-card no-plan-card"
+                 :class="{'card-animate': !loading.userStats}"
+                 style="animation-delay: 0.5s; grid-column: span 4; margin: 0 auto; max-width: 1200px; width: 100%;">
+              <div class="no-plan-content">
+                <div class="no-plan-icon">
+                  <IconShoppingCart :size="45" class="icon-cart"/>
+                </div>
+                <div class="no-plan-message">
+                  <div class="no-plan-title">{{ $t('dashboard.noPlanPrompt') }}</div>
+                  <div class="no-plan-actions">
+                    <button class="action-button primary" @click="goToShop">
+                      <IconShoppingBag :size="18" class="btn-icon"/>
+                      <span>{{ $t('dashboard.purchasePlan') }}</span>
+                    </button>
+                    <button class="action-button secondary" @click="goToSupport">
+                      <IconMessage :size="18" class="btn-icon"/>
+                      <span>{{ $t('dashboard.ticketSupport') }}</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div class="no-plan-message">
-                <div class="no-plan-title">{{ $t('dashboard.noPlanPrompt') }}</div>
-                <div class="no-plan-actions">
-                  <button class="action-button primary" @click="goToShop">
-                    <IconShoppingBag :size="18" class="btn-icon"/>
-                    <span>{{ $t('dashboard.purchasePlan') }}</span>
-                  </button>
-                  <button class="action-button secondary" @click="goToSupport">
-                    <IconMessage :size="18" class="btn-icon"/>
-                    <span>{{ $t('dashboard.ticketSupport') }}</span>
-                  </button>
+            </div>
+            <div v-else class="stats-card"
+                 :class="{
+                      'card-animate': !loading.userStats,
+                      'warning-card': isLowTraffic && !isTrafficDepleted,
+                      'danger-card': isTrafficDepleted
+                  }"
+                 style="animation-delay: 0.5s">
+              <div class="stats-icon">
+                <IconTransferVertical :size="32"/>
+              </div>
+              <div class="stats-info">
+                <div class="stats-value">{{ userStats.remainingTraffic }}</div>
+                <div class="stats-label">{{ $t('dashboard.remainingTraffic') }}</div>
+              </div>
+
+              <!-- 横向进度条效果 -->
+              <div class="traffic-container">
+                <div class="traffic-bar">
+                  <div class="traffic-progress"
+                       :class="{'animate-progress': waterAnimationState.canAnimate}"
+                       :style="{ width: waterAnimationState.canAnimate ? `${trafficPercentage}%` : '0%' }">
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <!-- 确保这个 div 闭合在 template 内部 -->
         </template>
-
-        <template v-else>
-          <div class="stats-card"
-               :class="{
-              'card-animate': !loading.userStats,
-              'warning-card': isLowTraffic && !isTrafficDepleted,
-              'danger-card': isTrafficDepleted
-            }"
-               style="animation-delay: 0.5s">
-            <div class="stats-icon">
-              <IconTransferVertical :size="32"/>
-            </div>
-            <div class="stats-info">
-              <div class="stats-value">{{ userStats.remainingTraffic }}</div>
-              <div class="stats-label">{{ $t('dashboard.remainingTraffic') }}</div>
-            </div>
-
- 
-      <!-- 横向进度条效果 -->
-<div class="stats-card">
-  <div class="traffic-container">
-    <div class="traffic-bar">
-      <div class="traffic-progress"
-           :class="{'animate-progress': waterAnimationState.canAnimate}"
-           :style="{ width: waterAnimationState.canAnimate ? `${trafficPercentage}%` : '0%' }">
       </div>
-    </div>
-  </div>
-</div>
-
-            
 
       <!-- 官方客户端下载区域 -->
       <div class="dashboard-card download-card" :class="{'card-animate': !loading.userInfo}"
@@ -519,53 +517,52 @@
         @confirm="handlePopupConfirm"
     />
 
-  </div>
-
-  <!-- 重置流量确认弹窗 -->
-  <transition name="modal-fade">
-    <div class="modal-overlay" v-if="showResetTrafficModal">
-      <div class="modal-container">
-        <div class="modal-card reset-traffic-modal">
-          <div class="modal-header">
-            <h3>{{ $t('dashboard.resetTrafficConfirm') }}</h3>
-            <button class="close-button" @click="closeResetTrafficModal">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="warning-icon">
-              <IconAlertTriangle :size="48"/>
+    <!-- 重置流量确认弹窗 -->
+    <transition name="modal-fade">
+      <div class="modal-overlay" v-if="showResetTrafficModal">
+        <div class="modal-container">
+          <div class="modal-card reset-traffic-modal">
+            <div class="modal-header">
+              <h3>{{ $t('dashboard.resetTrafficConfirm') }}</h3>
+              <button class="close-button" @click="closeResetTrafficModal">×</button>
             </div>
-            <p class="warning-text">{{ $t('dashboard.resetTrafficDesc') }}</p>
-            <p class="note-text">{{ $t('dashboard.resetTrafficWarning') }}</p>
-          </div>
-          <div class="modal-footer">
-            <button class="cancel-btn" @click="closeResetTrafficModal">
-              {{ $t('common.cancel') }}
-            </button>
-            <button
-                class="confirm-btn"
-                :disabled="resetConfirmCooldown > 0 || isCreatingResetOrder"
-                @click="createResetTrafficOrder"
-            >
-              <template v-if="isCreatingResetOrder">
-                <span class="loading-container">
-                  <div class="loader-small"></div>
-                  <span>{{ $t('common.loading') }}</span>
-                </span>
-              </template>
-              <template v-else>
-                {{
-                  resetConfirmCooldown > 0 ? `${$t('common.confirm')} (${resetConfirmCooldown})` : $t('common.confirm')
-                }}
-              </template>
-            </button>
+            <div class="modal-body">
+              <div class="warning-icon">
+                <IconAlertTriangle :size="48"/>
+              </div>
+              <p class="warning-text">{{ $t('dashboard.resetTrafficDesc') }}</p>
+              <p class="note-text">{{ $t('dashboard.resetTrafficWarning') }}</p>
+            </div>
+            <div class="modal-footer">
+              <button class="cancel-btn" @click="closeResetTrafficModal">
+                {{ $t('common.cancel') }}
+              </button>
+              <button
+                  class="confirm-btn"
+                  :disabled="resetConfirmCooldown > 0 || isCreatingResetOrder"
+                  @click="createResetTrafficOrder"
+              >
+                <template v-if="isCreatingResetOrder">
+                  <span class="loading-container">
+                    <div class="loader-small"></div>
+                    <span>{{ $t('common.loading') }}</span>
+                  </span>
+                </template>
+                <template v-else>
+                  {{
+                    resetConfirmCooldown > 0 ? `${$t('common.confirm')} (${resetConfirmCooldown})` : $t('common.confirm')
+                  }}
+                </template>
+              </button>
+            </div>
           </div>
         </div>
+
+
       </div>
+    </transition>
 
-
-    </div>
-  </transition>
-
+  </div>
 </template>
 
 <script>
@@ -3728,5 +3725,3 @@ a.eztheme-btn {
   color: var(--theme-color);
 }
 </style>
-
-
