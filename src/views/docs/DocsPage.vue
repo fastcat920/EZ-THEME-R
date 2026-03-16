@@ -9,67 +9,10 @@
 
     <div class="docs-inner">
 
-      <!-- 欢迎卡片 -->
 
-      <div class="dashboard-card welcome-card">
-
-        <div class="card-header">
-
-          <h2 class="card-title">{{ $t('docs.welcome.title') || '教程中心' }}</h2>
-
-        </div>
-
-        <div class="card-body">
-
-          <p>{{ $t('docs.welcome.description') || '查找并阅读有关使用和配置的详细教程。' }}</p>
-
-        </div>
-
-      </div>
 
       
 
-      <!-- 标题栏 -->
-
-      <div class="docs-header">
-
-        <h1 class="docs-title">{{ $t('docs.title') }}</h1>
-
-        
-
-        <!-- 搜索框 -->
-
-        <div class="search-wrapper">
-
-          <div class="search-input-wrapper">
-
-            <IconSearch class="search-icon" :size="20" />
-
-            <input 
-
-              type="text" 
-
-              v-model="searchQuery" 
-
-              :placeholder="$t('docs.searchPlaceholder')" 
-
-              class="search-input"
-
-              @input="handleSearch"
-
-            />
-
-            <button v-if="searchQuery" @click="clearSearch" class="clear-button">
-
-              <IconX :size="18" />
-
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
 
 
 
