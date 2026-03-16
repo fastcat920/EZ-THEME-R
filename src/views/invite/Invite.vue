@@ -92,55 +92,7 @@
         </template>
       </div>
       
-      <!-- 返佣规则卡片 -->
-      <div class="dashboard-card">
-        <div class="card-header">
-          <h2 class="card-title">{{ $t('invite.rules.title') }}</h2>
-        </div>
-        <div class="card-body">
-          <div class="rules-grid">
-            <div class="rule-item">
-              <div class="rule-icon">
-                <IconShare :size="24" />
-              </div>
-              <div class="rule-content">
-                <h3>{{ $t('invite.rules.share.title') }}</h3>
-                <p>{{ $t('invite.rules.share.desc') }}</p>
-              </div>
-            </div>
-            
-            <div class="rule-item">
-              <div class="rule-icon">
-                <IconUserPlus :size="24" />
-              </div>
-              <div class="rule-content">
-                <h3>{{ $t('invite.rules.register.title') }}</h3>
-                <p>{{ $t('invite.rules.register.desc') }}</p>
-              </div>
-            </div>
-            
-            <div class="rule-item">
-              <div class="rule-icon">
-                <IconShoppingCart :size="24" />
-              </div>
-              <div class="rule-content">
-                <h3>{{ $t('invite.rules.purchase.title') }}</h3>
-                <p>{{ $t('invite.rules.purchase.desc') }}</p>
-              </div>
-            </div>
-            
-            <div class="rule-item">
-              <div class="rule-icon">
-                <IconCash :size="24" />
-              </div>
-              <div class="rule-content">
-                <h3>{{ $t('invite.rules.commission.title') }}</h3>
-                <p>{{ $t('invite.rules.commission.desc', { rate: inviteStats.commissionRate }) }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
       
       <!-- 佣金余额卡片 -->
       <div class="dashboard-card balance-card">
