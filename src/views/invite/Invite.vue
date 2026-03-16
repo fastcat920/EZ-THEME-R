@@ -27,15 +27,7 @@
     </transition>
     
     <div class="account-inner">
-      <!-- 欢迎卡片 -->
-      <div class="dashboard-card welcome-card">
-        <div class="card-header">
-          <h2 class="card-title">{{ $t('invite.title') }}</h2>
-        </div>
-        <div class="card-body">
-          <p>{{ $t('invite.description') }}</p>
-        </div>
-      </div>
+
       
       <!-- 返佣统计卡片组 -->
       <div class="stats-grid">
